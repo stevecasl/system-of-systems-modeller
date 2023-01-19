@@ -1585,6 +1585,7 @@ function systemButton(id_system, name){
 
 
 function displayTags($selector){
+	$($selector).empty()
 		//Setup the page
 		if (localStorage.getItem('includedFilterTag') == ''){
 			$($selector).append(`<p id="tagsIncluded">No included tags</p>`);

@@ -34,61 +34,69 @@ $(document).ready(function(){
   	selectedNode = new Node();
 })
 
+function addGraph(pageCleared)
+{
+	if ( pageCleared ){
+		$('#mainPaneContainer').append(`<div class="row"><div class="col"><div id="cy" class="px-1 w-100"></div></div></div>`);
+	}
+}
+
 //Load the appropriate main pane data
 async function pageSwitch(page){
 	debug(5,`In pageSwitch() with page:`)
+	var currentPage = null;
+	if (sessionStorage.getItem('currentPage') === null){
+		currentPage = localStorage.getItem('defaultLandingPage');
+	} else {
+		currentPage = sessionStorage.getItem('currentPage');
+	}
 
 	if (!page){
-		if (sessionStorage.getItem('currentPage') === null){
-			page = localStorage.getItem('defaultLandingPage');
-		} else {
-			page = sessionStorage.getItem('currentPage');
-		}
+		page = currentPage;
 	}
 	debug(5, page)
 
+	var pageCleared = page != currentPage;
+	if ( pageCleared )
+	{
+		$('#mainPaneContainer').empty();
+	}
+
 	switch (page){
 		case 'specificSystem':
-			$('#mainPaneContainer').empty();
-			displayTags('#mainPaneContainer');
-			$('#mainPaneContainer').append(`<div class="row"><div class="col"><div id="cy" class="px-1 w-100"></div></div></div>`);
+			displayTags('#tagsInfoContainer');
+			addGraph(pageCleared);
 			commonGraph({graph: page, id_system: sessionStorage.getItem('id_system')})
 			break;	
 		case 'standard':
 			sessionStorage.setItem('currentPage', page);
-			$('#mainPaneContainer').empty();
-			displayTags('#mainPaneContainer');
-			$('#mainPaneContainer').append(`<div class="row"><div class="col"><div id="cy" class="px-1 w-100"></div></div></div>`);
+			displayTags('#tagsInfoContainer');
+			addGraph(pageCleared);
 			commonGraph({graph: page})
 			break;	
 		case 'subsystems':
 		case 'standardOrganisation':
 			sessionStorage.setItem('currentPage', page);
-			$('#mainPaneContainer').empty();
-			$('#mainPaneContainer').append(`<div class="row"><div class="col"><div id="cy" class="px-1 w-100"></div></div></div>`);
+			addGraph(pageCleared);
 			commonGraph({graph: page})
 		break;
 		case 'summary':
 			sessionStorage.setItem('currentPage', 'summary');
-			$('#mainPaneContainer').empty();
 			$('#pageTitle').text(`SOS Model Summary ${parseInt(localStorage.getItem('activeYear'))}`)
 			listSummary();
 		break;
 		case 'issues':
 			sessionStorage.setItem('currentPage', 'issues');
-			$('#mainPaneContainer').empty();
 			$('#pageTitle').text(`SOS Model Issues ${parseInt(localStorage.getItem('activeYear'))}`)
 			listIssues();
 		break;
 		case 'charts':
 			sessionStorage.setItem('currentPage', 'charts');
-			$('#mainPaneContainer').empty();
 			$('#pageTitle').text(`Summary Charts`)
 			charts();
 		break;
 		case 'pocs':
 			sessionStorage.setItem('currentPage', 'pocs');
-			$('#mainPaneContainer').empty();
 			$('#pageTitle').text(`System POCs`)
 			pocs();
 		break;
